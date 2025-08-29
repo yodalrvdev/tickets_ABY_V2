@@ -1,0 +1,49 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2>Paramètres</h2>
+  <h3>Etats de ticket</h3>
+  <form method="post" style="display:flex; gap: 8px; align-items:end;">
+    <input type="hidden" name="action" value="add_status">
+    <div style="flex:1;">
+      <label>Nouvel état</label>
+      <input type="text" name="label" placeholder="Ex: Attente prise en charge">
+    </div>
+    <button class="btn" type="submit">Ajouter</button>
+  </form>
+  <table style="margin-top:12px;">
+    <thead><tr><th>Ordre</th><th>Libellé</th><th class="no-print"></th></tr></thead>
+    <tbody>
+      {% for s in statuses %}
+      <tr>
+        <td>{{ s.order_index }}</td>
+        <td>{{ s.label }}</td>
+        <td class="no-print">
+          <form method="post" onsubmit="return confirm('Supprimer l\'état ?')">
+            <input type="hidden" name="action" value="delete_status">
+            <input type="hidden" name="status_id" value="{{ s.id }}">
+            <button class="btn danger" type="submit">Supprimer</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="card" style="margin-top:16px;">
+  <h3>Réimporter depuis l’Excel</h3>
+  <form method="post" action="{{ url_for('main.admin_reimport') }}" class="no-print" style="display:flex; gap: 12px; align-items:end; flex-wrap:wrap;">
+    <div style="flex:1; min-width:220px;">
+      <label>Mode de réimport</label>
+      <select name="mode">
+        <option value="reset">Remise à zéro + import</option>
+        <option value="append">Incrémental (ajout)</option>
+      </select>
+    </div>
+    <button class="btn danger" type="submit" onclick="return confirm('Confirmer le réimport ?\nATTENTION: le mode \'Remise à zéro\' efface la base avant import !')">Lancer le réimport</button>
+  </form>
+  <p style="margin-top:8px;color:#475569;">Fichier utilisé : <code>{{ config.EXCEL_PATH }}</code></p>
+</div>
+{% endblock %}

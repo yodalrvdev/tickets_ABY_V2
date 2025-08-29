@@ -1,0 +1,36 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h2>Tickets</h2>
+    <a class="btn" href="{{ url_for('main.ticket_new') }}">Nouveau ticket</a>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Date émission</th><th>Etat</th><th>Objet</th><th>Emetteur</th><th>Destinataire</th><th>Eval.</th><th>CA généré</th><th class="no-print"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in tickets %}
+      <tr>
+        <td>{{ t.created_at.date() }}</td>
+        <td><span class="badge">{{ t.status.label }}</span></td>
+        <td>{{ t.subject }}</td>
+        <td>{{ t.sender.name }}</td>
+        <td>{{ t.receiver.name }}</td>
+        <td>{{ t.evaluation or "" }}</td>
+        <td>{{ "%.2f"|format(t.revenue or 0) }}</td>
+        <td class="no-print">
+          <a class="btn link" href="{{ url_for('main.ticket_edit', ticket_id=t.id) }}">Modifier</a>
+          <form method="post" action="{{ url_for('main.ticket_delete', ticket_id=t.id) }}" style="display:inline;" onsubmit="return confirm('Supprimer ce ticket ?')">
+            <button class="btn danger" type="submit">Supprimer</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

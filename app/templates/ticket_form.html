@@ -1,0 +1,58 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2>{{ action }} un ticket</h2>
+  <form method="post">
+    <label>Année</label>
+    <input type="number" name="year" value="{{ ticket.year if ticket else '' }}" placeholder="2025" required>
+
+    <label>Etat</label>
+    <select name="status_id" required>
+      {% for s in statuses %}
+        <option value="{{ s.id }}" {% if ticket and ticket.status_id==s.id %}selected{% endif %}>{{ s.label }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Date émission</label>
+    <input type="datetime-local" name="created_at" value="{{ ticket.created_at.isoformat(timespec='minutes') if ticket else '' }}">
+
+    <label>Date clôture</label>
+    <input type="datetime-local" name="closed_at" value="{{ ticket.closed_at.isoformat(timespec='minutes') if ticket and ticket.closed_at else '' }}">
+
+    <label>Emetteur (Ticket envoyé)</label>
+    <select name="sender_id" required>
+      {% for u in users %}
+        <option value="{{ u.id }}" {% if ticket and ticket.sender_id==u.id %}selected{% endif %}>{{ u.name }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Destinataire (Ticket reçu)</label>
+    <select name="receiver_id" required>
+      {% for u in users %}
+        <option value="{{ u.id }}" {% if ticket and ticket.receiver_id==u.id %}selected{% endif %}>{{ u.name }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Objet</label>
+    <input type="text" name="subject" value="{{ ticket.subject if ticket else '' }}" placeholder="Description du travail / produit" required>
+
+    <label>Evaluation</label>
+    <select name="evaluation">
+      <option value="">Non renseigné</option>
+      {% for e in ["Très satisfait", "Moyennement satisfait", "Insatisfait"] %}
+        <option value="{{ e }}" {% if ticket and ticket.evaluation==e %}selected{% endif %}>{{ e }}</option>
+      {% endfor %}
+    </select>
+
+    <label>CA généré</label>
+    <input type="number" step="0.01" name="revenue" value="{{ ticket.revenue if ticket and ticket.revenue is not none else '' }}">
+
+    <label>Commentaire</label>
+    <textarea name="comment" rows="4">{{ ticket.comment if ticket else '' }}</textarea>
+
+    <button class="btn" type="submit">{{ action }}</button>
+    <a class="btn secondary" href="{{ url_for('main.tickets_list') }}">Annuler</a>
+  </form>
+</div>
+{% endblock %}

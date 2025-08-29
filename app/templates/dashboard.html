@@ -1,0 +1,20 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2>Tableau de bord</h2>
+  <p>Total tickets : <strong>{{ total }}</strong> — Âge moyen : <strong>{{ avg_age }} jours</strong></p>
+  <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+    <canvas id="statusChart"></canvas>
+    <canvas id="evalChart"></canvas>
+  </div>
+</div>
+<script>
+fetch("{{ url_for('main.api_stats') }}").then(r=>r.json()).then(data=>{
+  const statusCtx = document.getElementById('statusChart');
+  new Chart(statusCtx, {type:'doughnut', data:{labels:data.status.map(x=>x.label), datasets:[{data:data.status.map(x=>x.value)}]}});
+  const evalCtx = document.getElementById('evalChart');
+  new Chart(evalCtx, {type:'doughnut', data:{labels:data.evaluation.map(x=>x.label), datasets:[{data:data.evaluation.map(x=>x.value)}]}});
+});
+</script>
+{% endblock %}

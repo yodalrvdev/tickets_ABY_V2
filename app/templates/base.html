@@ -1,0 +1,37 @@
+
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recommandations</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="navbar no-print">
+    <div class="container">
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('main.dashboard') }}">Tableau de bord</a>
+        <a href="{{ url_for('main.tickets_list') }}">Tickets</a>
+        <a href="{{ url_for('main.stats') }}">Statistiques</a>
+        <a href="{{ url_for('main.print_views') }}">Impression</a>
+        <a href="{{ url_for('main.settings') }}">Paramètres</a>
+        <span style="float:right;"><a href="{{ url_for('auth.logout') }}">Se déconnecter</a></span>
+      {% endif %}
+    </div>
+  </div>
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="card" style="border-left: 4px solid {% if category=='success' %}#16a34a{% elif category=='danger' %}#dc2626{% else %}#2563eb{% endif %};">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>
